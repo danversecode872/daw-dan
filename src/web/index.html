@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAW Dan - Professional Digital Audio Workstation</title>
+    <meta name="description" content="Professional cross-platform Digital Audio Workstation in your browser" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        
+        #root {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        /* Loading screen */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #333;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Audio permission prompt */
+        .permission-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            z-index: 1000;
+        }
+        
+        .permission-prompt h3 {
+            margin-bottom: 15px;
+            color: #3b82f6;
+        }
+        
+        .permission-prompt p {
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .permission-prompt button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .permission-prompt button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="loading">
+            <div class="spinner"></div>
+            <div>
+                <h2>Loading DAW Dan...</h2>
+                <p>Initializing Web Audio Engine</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio permission prompt (hidden by default) -->
+    <div id="permission-prompt" class="permission-prompt" style="display: none;">
+        <h3>🎵 Microphone Access Needed</h3>
+        <p>DAW Dan needs access to your microphone for recording functionality. Click below to grant permission.</p>
+        <button onclick="requestAudioPermission()">Grant Microphone Access</button>
+    </div>
+    
+    <script type="module">
+        // Request audio permissions if needed
+        async function requestAudioPermission() {
+            try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                document.getElementById('permission-prompt').style.display = 'none';
+                console.log('Microphone access granted');
+            } catch (error) {
+                console.error('Microphone access denied:', error);
+                alert('Microphone access is required for recording functionality.');
+            }
+        }
+        
+        // Check audio context support
+        function checkAudioSupport() {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) {
+                document.getElementById('root').innerHTML = `
+                    <div class="loading">
+                        <div>
+                            <h2>⚠️ Web Audio API Not Supported</h2>
+                            <p>Your browser doesn't support Web Audio API. Please use a modern browser like Chrome, Firefox, or Safari.</p>
+                        </div>
+                    </div>
+                `;
+                return false;
+            }
+            return true;
+        }
+        
+        // Initialize app
+        if (checkAudioSupport()) {
+            // Load the React app
+            import('./WebApp.jsx');
+        }
+    </script>
+</body>
+</html>
