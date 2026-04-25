@@ -1,0 +1,171 @@
+{
+  "name": "daw-dan",
+  "version": "1.0.0",
+  "description": "A professional cross-platform Digital Audio Workstation with plugin support",
+  "main": "main.js",
+  "homepage": "https://dawdan.com",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "vite build",
+    "dist": "npm run build && electron-builder --publish=never",
+    "dist:win": "npm run build && electron-builder --win --publish=never",
+    "dist:mac": "npm run build && electron-builder --mac --publish=never",
+    "dist:linux": "npm run build && electron-builder --linux --publish=never",
+    "dist:all": "npm run build && electron-builder --win --mac --linux --publish=never",
+    "pack": "electron-builder --dir",
+    "pack:win": "electron-builder --win --dir",
+    "pack:mac": "electron-builder --mac --dir",
+    "pack:linux": "electron-builder --linux --dir",
+    "postinstall": "electron-builder install-app-deps",
+    "build:cross": "node scripts/build.js",
+    "build:win": "node scripts/build.js windows",
+    "build:mac": "node scripts/build.js macos",
+    "build:linux": "node scripts/build.js linux",
+    "build:all": "node scripts/build.js all",
+    "release": "node scripts/build.js all --release",
+    "clean": "node scripts/build.js clean",
+    "test:build": "npm run build && npm run pack"
+  },
+  "keywords": ["daw", "audio", "music", "workstation", "plugins", "desktop", "cross-platform", "windows", "macos", "linux"],
+  "author": {
+    "name": "DAW Dan",
+    "email": "contact@dawdan.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "tone": "^14.7.77",
+    "lucide-react": "^0.263.1",
+    "zustand": "^4.4.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "wavesurfer.js": "^7.3.3",
+    "node-record-lpcm16": "^1.0.1",
+    "naudiodon": "^2.1.0",
+    "electron-store": "^8.1.0",
+    "electron-updater": "^6.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@types/node": "^20.5.0",
+    "electron": "^26.2.1",
+    "electron-builder": "^24.6.4",
+    "vite": "^4.4.5",
+    "@vitejs/plugin-react": "^4.0.3",
+    "tailwindcss": "^3.3.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "electron-builder-notarize": "^1.2.1"
+  },
+  "build": {
+    "appId": "com.dawdan.app",
+    "productName": "DAW Dan",
+    "copyright": "Copyright © 2024 DAW Dan",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "build/**/*",
+      "node_modules/**/*",
+      "!node_modules/.bin/**/*",
+      "!node_modules/**/CHANGELOG.md",
+      "!node_modules/**/README.md",
+      "!node_modules/**/LICENSE",
+      "!node_modules/**/package.json",
+      "!**/{test,__tests__,tests,powered-test,example,examples}/**/*",
+      "!**/node_modules/.cache/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64", "ia32"]
+        }
+      ],
+      "requestedExecutionLevel": "asInvoker",
+      "publisherName": "DAW Dan"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "DAW Dan",
+      "include": "build/installer.nsh"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "category": "public.app-category.music",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "dmg": {
+      "title": "DAW Dan Installer",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        },
+        {
+          "target": "rpm",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "AudioVideo"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "dawdan",
+      "repo": "daw-dan"
+    }
+  }
+}
